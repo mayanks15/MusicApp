@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
-const tokenContext = createContext();
+const Context = createContext();
 
 //CLIENT ID -> f4968337564f4a118d2e0f10d1528291
 //CLIENT SECRET ID -> 3ccdb32fd3ee4c09852c8fa6931157de
@@ -9,6 +9,8 @@ const tokenContext = createContext();
 function Provider({ children }) {
   //Token Fetching
   const [accessToken, setToken] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loggedIn,setLogging] = useState(false);
   useEffect(() => {
     fetchToken();
   }, []);
@@ -22,14 +24,19 @@ function Provider({ children }) {
         },
       }
     );
+    setLoading(false);
     setToken(response.data.access_token);
   };
+  if (loading) {
+    return <div className="text-white">Loading...</div>;
+  }
+  
   return (
-    <tokenContext.Provider value={accessToken}>
+    <Context.Provider value={{accessToken,loggedIn,setLogging}}>
       {children}
-    </tokenContext.Provider>
+    </Context.Provider>
   );
 }
 
 export { Provider };
-export default tokenContext;
+export default Context;
